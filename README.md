@@ -23,54 +23,48 @@ YouTube 字幕提取与格式转换工具。
 
 ## 🚀 安装
 
-### 方式一：一键安装（推荐）
+### 一键安装（推荐）
 
 ```bash
 # 安装全部 skills
 curl -sSL https://raw.githubusercontent.com/AshleyGao031/hermes-community-skills/main/install.sh | bash
 
 # 只安装某个分类
-curl -sSL https://raw.githubusercontent.com/AshleyGao031/hermes-community-skills/main/install.sh | bash -s media
+curl -sSL ... | bash -s media
 
 # 只安装某个 skill
-curl -sSL https://raw.githubusercontent.com/AshleyGao031/hermes-community-skills/main/install.sh | bash -s media/video-to-article
+curl -sSL ... | bash -s media/video-to-article
 ```
 
-### 方式二：手动安装
+### 手动安装
 
 ```bash
 git clone https://github.com/AshleyGao031/hermes-community-skills.git /tmp/hermes-skills
-cp -r /tmp/hermes-skills/media ~/.hermes/skills/
-pip install youtube-transcript-api
+bash /tmp/hermes-skills/install.sh
 ```
 
-### 方式三：Git Submodule（适合开发者）
+### 更新已安装的 Skills
 
 ```bash
-cd ~/.hermes/skills
-git submodule add https://github.com/AshleyGao031/hermes-community-skills.git community
+bash ~/.hermes/community-skills-repo/install.sh pull
 ```
 
-## 🔄 更新 Skills
+## ⚠️ 安全审查（必读）
 
-已安装的 skills 如果有更新版本，可以重新运行安装脚本覆盖：
+**推送 Skill 前必须检查以下内容，确保不泄露敏感信息：**
 
-```bash
-# 先删除旧版再重装
-rm -rf ~/.hermes/skills/media/video-to-article ~/.hermes/skills/media/youtube-content
-curl -sSL https://raw.githubusercontent.com/AshleyGao031/hermes-community-skills/main/install.sh | bash
-```
+1. **API Key / Token / Secret** — 搜索所有文件，确保没有硬编码的密钥
+   ```bash
+   # 推送前自查命令
+   grep -rn "api_key\|token\|secret\|password\|bearer" your-skill/
+   ```
+2. **环境变量引用可以保留** — `process.env.API_KEY`、`os.environ.get("KEY")` 这类写法没问题，只要不是实际值
+3. **个人路径** — 检查是否包含你的真实用户名、IP、内部域名等
+4. **内部服务地址** — 公司/团队的内部 API 地址不应包含在内
 
-或者用 submodule 方式（自动拉取）：
-
-```bash
-cd ~/.hermes/skills/community
-git pull origin main
-```
+> 💡 原则：Skill 应该拿过来就能用，敏感信息通过环境变量注入，而不是写在文件里。
 
 ## 🤝 贡献你的 Skill
-
-欢迎把你自己写的好用 skill 共享出来！流程很简单：
 
 ### 目录结构
 
@@ -88,15 +82,25 @@ category/           # 分类：media / research / productivity / ...
 
 1. **Fork** 本仓库
 2. 在对应分类下创建你的 skill 目录（或新建分类）
-3. 确保目录中有 `SKILL.md`（必须有）
-4. 在 README 的「已收录 Skills」中添加描述
-5. 提交 **Pull Request**
+3. 确保目录中有 `SKILL.md`
+4. **⚠️ 按上方安全审查清单检查所有文件**
+5. 在 README 的「已收录 Skills」中添加描述
+6. 提交 **Pull Request**
 
 ### Skill 命名规范
 
-- 用小写英文 + 短横线：`my-cool-skill`
-- 目录名即 skill 名，保持简短有意义
+- 小写英文 + 短横线：`my-cool-skill`
 - 每个 skill 自包含，不依赖其他 skill 的内部文件
+
+### 推送本地 Skills
+
+如果你已经在本地写好了 skill，可以用安装脚本直接推送：
+
+```bash
+bash ~/.hermes/community-skills-repo/install.sh push "添加了 xxx skill"
+```
+
+推送前同样要完成安全审查。
 
 ## 📋 环境变量
 
@@ -110,13 +114,13 @@ category/           # 分类：media / research / productivity / ...
 ## 💡 常见问题
 
 **Q: 安装后会覆盖我已有的同名 skill 吗？**
-A: 不会。安装脚本检测到同名目录会跳过，需要先删除旧版才能安装新版。
-
-**Q: 我不熟悉 Git，怎么贡献？**
-A: 最简单的方式：把你的 skill 文件（一个目录，含 SKILL.md）发给仓库维护者，帮忙提交即可。
+A: 会覆盖同名目录。建议先备份或用不同分类。
 
 **Q: Skill 和 Hermes 内置 skill 重名怎么办？**
-A: 社区 skill 会安装到 `~/.hermes/skills/` 下，和内置 skill 路径相同，同名时会共存。Hermes 按 skill 名称加载，建议避免重名。
+A: 建议避免和内置 skill 重名，用不同的名字。
+
+**Q: 我不熟悉 Git，怎么贡献？**
+A: 把你的 skill 文件（一个目录，含 SKILL.md）发给仓库维护者，帮忙提交即可。
 
 ## License
 

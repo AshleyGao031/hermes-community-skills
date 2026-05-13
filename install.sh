@@ -3,47 +3,23 @@
 # 用法:
 #   bash install.sh              # 安装全部 skills
 #   bash install.sh media        # 只安装 media 分类
-#   bash install.sh pull         # 拉取最新更新
+#   bash install.sh media/video-to-article  # 只安装某个 skill
+#   bash install.sh pull         # 拉取最新更新（已安装过的）
 #   bash install.sh push "msg"   # 推送本地 skills 到仓库
 
 set -e
 
 SKILLS_DIR="${HOME}/.hermes/skills"
+REPO_URL="https://github.com/AshleyGao031/hermes-community-skills.git"
 REPO_DIR="${HOME}/.hermes/community-skills-repo"
-DEPLOY_KEY="${HOME}/.hermes/.ssh/community-deploy"
-REPO_URL="git@hermes-community:AshleyGao031/hermes-community-skills.git"
 
-# 确保 SSH 配置
-setup_ssh() {
-    if ! grep -q "Host hermes-community" "$HOME/.ssh/config" 2>/dev/null; then
-        mkdir -p "$HOME/.ssh"
-        cat >> "$HOME/.ssh/config" << 'EOF'
-
-Host hermes-community
-    Hostname github.com
-    User git
-    IdentityFile ~/.hermes/.ssh/community-deploy
-    IdentitiesOnly yes
-    StrictHostKeyChecking no
-EOF
-    fi
-}
-
-# 确保 repo 存在
 setup_repo() {
-    if [ ! -f "$DEPLOY_KEY" ]; then
-        echo "❌ 缺少 Deploy Key: $DEPLOY_KEY"
-        echo "请联系仓库管理员获取 community-deploy 私钥文件"
-        exit 1
-    fi
-    setup_ssh
     if [ ! -d "$REPO_DIR" ]; then
         echo "📥 克隆仓库..."
-        git clone "$REPO_URL" "$REPO_DIR"
+        git clone --depth 1 "$REPO_URL" "$REPO_DIR"
     fi
 }
 
-# 安装 skills
 install_from_repo() {
     setup_repo
 
@@ -79,7 +55,7 @@ install_from_repo() {
             for skill_dir in "$target_path"*/; do
                 [ -d "$skill_dir" ] && [ -f "$skill_dir/SKILL.md" ] && install_skill "$skill_dir"
             done
-        fi
+        done
     else
         echo "❌ 找不到: $TARGET"
         exit 1
@@ -88,9 +64,11 @@ install_from_repo() {
     echo "🎉 安装完成！"
 }
 
-# 推送本地 skills
 push_to_repo() {
-    setup_repo
+    if [ ! -d "$REPO_DIR" ]; then
+        echo "❌ 仓库未克隆，请先运行: bash install.sh"
+        exit 1
+    fi
 
     local msg="${1:-update skills}"
     echo "📥 拉取最新..."
