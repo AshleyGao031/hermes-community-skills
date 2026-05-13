@@ -1,0 +1,22 @@
+# 经营分析 Skill 配置
+
+thresholds:
+  # 绝对值指标（GMV/营收等）环比异常阈值
+  absolute_change: 0.20
+  # 比率类指标（SMROI等）异常阈值
+  ratio_change: 0.15
+  # 连续风险周数提示阈值
+  continuous_risk_weeks: 3
+
+report:
+  # 数据缺失时的占位符
+  missing_value_placeholder: "[数据缺失-请补充]"
+  # 是否强制逐模块校验
+  require_module_validation: true
+  # 是否生成数据快照
+  generate_snapshot: true
+
+snapshot:
+  filename: "data_snapshot.md"
+  include_last_week: true
+  include_key_metrics_index: true
