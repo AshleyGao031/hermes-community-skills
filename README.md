@@ -1,8 +1,8 @@
 # 🦞 Hermes Community Skills
 
-Hermes Agent 社区共享 Skills 仓库。收集、整理和共享高质量的 Hermes skills。
+Hermes Agent 社区共享 Skills 仓库。收集、整理和共享高质量的 Hermes Skills，让每只龙虾都能用上最好的工具。
 
-## 📦 包含的 Skills
+## 📦 已收录 Skills
 
 ### media/video-to-article
 将视频链接（YouTube、小宇宙播客等）转换为深度文章。
@@ -19,71 +19,104 @@ YouTube 字幕提取与格式转换工具。
 - 输出格式：章节 / 摘要 / 推文串 / 博客 / 金句
 - 完善的 fallback 链处理 IP 封锁问题
 
+---
+
 ## 🚀 安装
 
-### 方式一：一键安装脚本
+### 方式一：一键安装（推荐）
 
 ```bash
 # 安装全部 skills
 curl -sSL https://raw.githubusercontent.com/AshleyGao031/hermes-community-skills/main/install.sh | bash
 
-# 或只安装指定分类
+# 只安装某个分类
 curl -sSL https://raw.githubusercontent.com/AshleyGao031/hermes-community-skills/main/install.sh | bash -s media
+
+# 只安装某个 skill
+curl -sSL https://raw.githubusercontent.com/AshleyGao031/hermes-community-skills/main/install.sh | bash -s media/video-to-article
 ```
 
 ### 方式二：手动安装
 
 ```bash
-# 克隆仓库
 git clone https://github.com/AshleyGao031/hermes-community-skills.git /tmp/hermes-skills
-
-# 复制到 Hermes skills 目录
 cp -r /tmp/hermes-skills/media ~/.hermes/skills/
-
-# 安装依赖
 pip install youtube-transcript-api
 ```
 
-### 方式三：Git Submodule（推荐开发者）
+### 方式三：Git Submodule（适合开发者）
 
 ```bash
 cd ~/.hermes/skills
 git submodule add https://github.com/AshleyGao031/hermes-community-skills.git community
-# 然后在需要的地方软链接
-ln -s community/media media-community
 ```
 
-## 🤝 贡献
+## 🔄 更新 Skills
 
-欢迎提交 PR 添加新 skills 或改进现有 ones！
+已安装的 skills 如果有更新版本，可以重新运行安装脚本覆盖：
 
-### Skill 目录结构
+```bash
+# 先删除旧版再重装
+rm -rf ~/.hermes/skills/media/video-to-article ~/.hermes/skills/media/youtube-content
+curl -sSL https://raw.githubusercontent.com/AshleyGao031/hermes-community-skills/main/install.sh | bash
+```
+
+或者用 submodule 方式（自动拉取）：
+
+```bash
+cd ~/.hermes/skills/community
+git pull origin main
+```
+
+## 🤝 贡献你的 Skill
+
+欢迎把你自己写的好用 skill 共享出来！流程很简单：
+
+### 目录结构
 
 ```
-category/
+category/           # 分类：media / research / productivity / ...
 └── skill-name/
-    ├── SKILL.md           # 必需：Skill 定义文件
-    ├── references/        # 可选：参考文档
-    ├── templates/         # 可选：模板文件
-    ├── scripts/           # 可选：脚本工具
-    └── assets/            # 可选：静态资源
+    ├── SKILL.md    # 必需：Skill 定义（frontmatter + 说明）
+    ├── references/ # 可选：参考文档
+    ├── templates/  # 可选：模板文件
+    ├── scripts/    # 可选：脚本工具
+    └── assets/     # 可选：静态资源
 ```
 
 ### 贡献步骤
 
-1. Fork 本仓库
-2. 按目录结构添加你的 skill
-3. 在 README 中添加描述
-4. 提交 PR
+1. **Fork** 本仓库
+2. 在对应分类下创建你的 skill 目录（或新建分类）
+3. 确保目录中有 `SKILL.md`（必须有）
+4. 在 README 的「已收录 Skills」中添加描述
+5. 提交 **Pull Request**
+
+### Skill 命名规范
+
+- 用小写英文 + 短横线：`my-cool-skill`
+- 目录名即 skill 名，保持简短有意义
+- 每个 skill 自包含，不依赖其他 skill 的内部文件
 
 ## 📋 环境变量
 
-部分 skills 需要配置环境变量（在 `~/.hermes/.env` 中添加）：
+部分 skills 需要在 `~/.hermes/.env` 中配置：
 
 | 变量 | 用途 | 所需 Skill |
 |------|------|-----------|
 | `GETNOTE_API_KEY` | Get笔记 API 密钥 | video-to-article |
 | `GETNOTE_CLIENT_ID` | Get笔记客户端 ID | video-to-article |
+
+## 💡 常见问题
+
+**Q: 安装后会覆盖我已有的同名 skill 吗？**
+A: 不会。安装脚本检测到同名目录会跳过，需要先删除旧版才能安装新版。
+
+**Q: 我不熟悉 Git，怎么贡献？**
+A: 最简单的方式：把你的 skill 文件（一个目录，含 SKILL.md）发给仓库维护者，帮忙提交即可。
+
+**Q: Skill 和 Hermes 内置 skill 重名怎么办？**
+A: 社区 skill 会安装到 `~/.hermes/skills/` 下，和内置 skill 路径相同，同名时会共存。Hermes 按 skill 名称加载，建议避免重名。
 
 ## License
 
